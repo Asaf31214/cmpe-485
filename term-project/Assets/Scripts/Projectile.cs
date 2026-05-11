@@ -4,7 +4,8 @@ public class Projectile : MonoBehaviour
 {
     private const float Radius = 0.3f;
 
-    private Rigidbody rb;
+    public Rigidbody rb;
+    private bool exploded;
 
     public static GameObject Create(Vector3 position, Vector3 direction, float power)
     {
@@ -36,5 +37,32 @@ public class Projectile : MonoBehaviour
         go.GetComponent<Rigidbody>().velocity = direction * power;
 
         return go;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (exploded) return;
+
+        float impactVelocity = collision.relativeVelocity.magnitude;
+        if (impactVelocity > 2f)
+        {
+            Explode();
+        }
+    }
+
+    private void Update()
+    {
+        if (transform.position.y < -10f && !exploded)
+        {
+            Explode();
+        }
+    }
+
+    private void Explode()
+    {
+        exploded = true;
+        rb.isKinematic = true;
+        ExplosionManager.Create(transform.position);
+        Destroy(gameObject, 0.3f);
     }
 }

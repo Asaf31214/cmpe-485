@@ -1,19 +1,127 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+
+public enum GameState { Aim, Fire, Resolve, GameOver }
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance { get; private set; }
+
+    public GameState State { get; private set; } = GameState.Aim;
+    public int MaxAmmo = 10;
+    public int Ammo { get; private set; }
+    public int TotalTargets { get; private set; }
+    private int destroyedTargets;
+
+    private CannonController cannon;
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
+
     private void Start()
     {
-        CannonController.OnFire += FireProjectile;
+        StartCoroutine(InitGame());
+    }
+
+    private IEnumerator InitGame()
+    {
+        yield return null;
+
+        cannon = FindObjectOfType<CannonController>();
+        CannonController.OnFire += OnFireRequested;
+        BuildCastle();
+        Ammo = MaxAmmo;
+        GameUI.Instance.UpdateAmmo(Ammo, MaxAmmo);
     }
 
     private void OnDestroy()
     {
-        CannonController.OnFire -= FireProjectile;
+        CannonController.OnFire -= OnFireRequested;
     }
 
-    private void FireProjectile(Vector3 position, Vector3 direction, float power)
+    private void BuildCastle()
     {
-        Projectile.Create(position, direction, power);
+        var castle = CastleBuilder.BuildCastle(new Vector3(0, 0, 15));
+        TotalTargets = 0;
+        foreach (var d in FindObjectsOfType<Destructible>())
+        {
+            if (d.IsTarget) TotalTargets++;
+        }
+        destroyedTargets = 0;
+    }
+
+    private void OnFireRequested(Vector3 pos, Vector3 dir, float power)
+    {
+        if (State != GameState.Aim || Ammo <= 0) return;
+        Ammo--;
+        GameUI.Instance.UpdateAmmo(Ammo, MaxAmmo);
+        Projectile.Create(pos, dir, power);
+        StartCoroutine(FireSequence());
+    }
+
+    private IEnumerator FireSequence()
+    {
+        State = GameState.Fire;
+        yield return null;
+
+        // Wait for all projectiles to settle or be destroyed
+        yield return new WaitForSeconds(1f);
+        yield return WaitForProjectilesToSettle();
+
+        State = GameState.Resolve;
+        CheckWinLose();
+    }
+
+    private IEnumerator WaitForProjectilesToSettle()
+    {
+        float timeout = 8f;
+        float elapsed = 0f;
+
+        while (elapsed < timeout)
+        {
+            bool allSettled = true;
+            foreach (var p in FindObjectsOfType<Projectile>())
+            {
+                if (p.rb.velocity.sqrMagnitude > 0.5f)
+                {
+                    allSettled = false;
+                    break;
+                }
+            }
+            if (allSettled) yield break;
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    private void CheckWinLose()
+    {
+        int remaining = TotalTargets - destroyedTargets;
+        if (remaining <= 0)
+        {
+            State = GameState.GameOver;
+            GameUI.Instance.ShowWin();
+            return;
+        }
+        if (Ammo <= 0)
+        {
+            State = GameState.GameOver;
+            GameUI.Instance.ShowLose();
+            return;
+        }
+        State = GameState.Aim;
+    }
+
+    public void TargetDestroyed()
+    {
+        destroyedTargets++;
     }
 }
