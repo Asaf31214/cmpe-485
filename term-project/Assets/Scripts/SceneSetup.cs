@@ -20,6 +20,13 @@ public class SceneSetup : MonoBehaviour
         CreateLighting();
         SetupCamera();
         CreateCannon();
+        CreateGameManager();
+    }
+
+    private void CreateGameManager()
+    {
+        var gmGO = new GameObject("GameManager");
+        gmGO.AddComponent<GameManager>();
     }
 
     private void CreateCannon()
@@ -33,6 +40,7 @@ public class SceneSetup : MonoBehaviour
         Ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
         Ground.name = "Ground";
         Ground.transform.position = new Vector3(0, 0, 0);
+        Ground.transform.localScale = Vector3.one * 5;
         Ground.GetComponent<Renderer>().material.color = new Color(0.3f, 0.5f, 0.3f);
     }
 
@@ -47,7 +55,7 @@ public class SceneSetup : MonoBehaviour
 
     private void SetupCamera()
     {
-        Camera.main.transform.position = new Vector3(0, 8, -18);
-        Camera.main.transform.LookAt(new Vector3(0, 3, 10));
+        Camera.main.transform.position = new Vector3(0, 15, -45);
+        Camera.main.transform.LookAt(new Vector3(0, 3, 15));
     }
 }

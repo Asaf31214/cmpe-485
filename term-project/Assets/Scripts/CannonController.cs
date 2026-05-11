@@ -1,7 +1,9 @@
 using UnityEngine;
+using System;
 
 public class CannonController : MonoBehaviour
 {
+    public static event Action<Vector3, Vector3, float> OnFire;
     public float YawSpeed = 250f;
     public float PitchSpeed = 200f;
     public float MinPitch = 10f;
@@ -29,7 +31,7 @@ public class CannonController : MonoBehaviour
     {
         // Base
         basePivot = new GameObject("CannonBase");
-        basePivot.transform.position = new Vector3(0, 0.3f, -8f);
+        basePivot.transform.position = new Vector3(0, 0.3f, -25f);
 
         var baseMesh = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
         baseMesh.name = "Base";
@@ -73,13 +75,18 @@ public class CannonController : MonoBehaviour
         pitch += Input.GetAxis("Vertical") * PitchSpeed * Time.deltaTime;
         pitch = Mathf.Clamp(pitch, MinPitch, MaxPitch);
 
-        if (Input.GetKey(KeyCode.PageUp))
+        if (Input.GetKey(KeyCode.C))
         {
             Power = Mathf.Min(Power + PowerSpeed * Time.deltaTime, MaxPower);
         }
-        if (Input.GetKey(KeyCode.PageDown))
+        if (Input.GetKey(KeyCode.V))
         {
             Power = Mathf.Max(Power - PowerSpeed * Time.deltaTime, MinPower);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            OnFire?.Invoke(GetMuzzlePosition(), GetFireDirection(), Power);
         }
     }
 
