@@ -107,6 +107,19 @@ public class GameManager : MonoBehaviour
         {
             LoadLevel(2);
         }
+
+        // Next level / restart when game over
+        if (State == GameState.GameOver)
+        {
+            if (Input.GetKeyDown(KeyCode.N))
+            {
+                OnNextLevel();
+            }
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                RestartLevel();
+            }
+        }
     }
 
     private void LoadLevel(int level)
@@ -171,6 +184,17 @@ public class GameManager : MonoBehaviour
         GameUI.Instance.UpdateAmmo(Ammo, MaxAmmo);
         GameUI.Instance.UpdateLevel();
         GameUI.Instance.HideGameOver();
+    }
+
+    private void OnNextLevel()
+    {
+        LevelData.CurrentLevel++;
+        if (LevelData.CurrentLevel >= 3)
+        {
+            GameUI.Instance.ShowWin();
+            return;
+        }
+        RestartLevel();
     }
 
     public void TargetDestroyed()

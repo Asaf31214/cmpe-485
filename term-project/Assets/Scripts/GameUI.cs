@@ -94,22 +94,15 @@ public class GameUI : MonoBehaviour
     {
         gameOverOverlay.SetActive(true);
         bool isFinalLevel = LevelData.CurrentLevel >= 2;
-        gameOverText.text = isFinalLevel ? "GAME COMPLETE!" : "LEVEL COMPLETE!";
+        gameOverText.text = isFinalLevel ? "ALL LEVELS COMPLETE!\nYOU WIN!" : "LEVEL COMPLETE!\nPress N for next level";
         gameOverText.color = Color.green;
     }
 
     public void ShowLose()
     {
         gameOverOverlay.SetActive(true);
-        gameOverText.text = "YOU LOSE!";
+        gameOverText.text = "YOU LOSE!\nPress R to restart";
         gameOverText.color = Color.red;
-    }
-
-    public void ShowGameComplete()
-    {
-        gameOverOverlay.SetActive(true);
-        gameOverText.text = "ALL LEVELS COMPLETE!\nYOU WIN!";
-        gameOverText.color = Color.green;
     }
 
     public void HideGameOver()
