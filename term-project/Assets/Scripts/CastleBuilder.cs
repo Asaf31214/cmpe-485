@@ -46,7 +46,9 @@ public class CastleBuilder : MonoBehaviour
         go.transform.localPosition = localPos;
         go.transform.localScale = new Vector3(BlockSize, BlockSize, BlockSize);
 
-        go.GetComponent<Renderer>().material.color = isTarget ? Color.red : new Color(0.6f, 0.6f, 0.6f);
+        var mat = new Material(Shader.Find("Diffuse"));
+        mat.color = isTarget ? Color.red : new Color(0.6f, 0.6f, 0.6f);
+        go.GetComponent<Renderer>().material = mat;
 
         var rb = go.AddComponent<Rigidbody>();
         rb.mass = 1f;
