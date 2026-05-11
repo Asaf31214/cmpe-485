@@ -94,6 +94,12 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        // Continuous win check during Resolve - catches fall damage kills
+        if (State == GameState.Resolve || State == GameState.GameOver)
+        {
+            CheckWinLose();
+        }
+
         // Level select cheat codes (works anytime)
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
