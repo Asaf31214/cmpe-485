@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     public GameState State { get; private set; } = GameState.Aim;
-    public int MaxAmmo = 10;
+    public int MaxAmmo = 5;
     public int Ammo { get; private set; }
     public int TotalTargets { get; private set; }
     private int destroyedTargets;
