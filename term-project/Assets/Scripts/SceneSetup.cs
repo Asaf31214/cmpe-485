@@ -27,6 +27,7 @@ public class SceneSetup : MonoBehaviour
     {
         var gmGO = new GameObject("GameManager");
         gmGO.AddComponent<GameManager>();
+        gmGO.AddComponent<PowerBar>();
     }
 
     private void CreateCannon()
