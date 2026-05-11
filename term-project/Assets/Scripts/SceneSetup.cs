@@ -73,8 +73,8 @@ public class SceneSetup : MonoBehaviour
 
         RenderSettings.fog = true;
         RenderSettings.fogMode = FogMode.Linear;
-        RenderSettings.fogStartDistance = 30f;
-        RenderSettings.fogEndDistance = 400f;
+        RenderSettings.fogStartDistance = 100f;
+        RenderSettings.fogEndDistance = 500f;
         RenderSettings.fogColor = new Color(0.6f, 0.75f, 0.9f);
 
         var lightGO = new GameObject("DirectionalLight");
@@ -95,7 +95,8 @@ public class SceneSetup : MonoBehaviour
 
     private void SetupCamera()
     {
-        Camera.main.transform.position = new Vector3(0, 15, -45);
-        Camera.main.transform.LookAt(new Vector3(0, 3, 15));
+        // Angled camera view to see trajectory preview clearly
+        Camera.main.transform.position = new Vector3(-15, 12, -40);
+        Camera.main.transform.LookAt(new Vector3(0, 5, 15));
     }
 }

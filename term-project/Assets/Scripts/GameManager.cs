@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
 
     private void BuildCastle()
     {
-        var castle = CastleBuilder.BuildCastle(new Vector3(0, 0, 15));
+        var castle = CastleBuilder.BuildCastle(new Vector3(0, 0, 75));
         TotalTargets = 0;
         foreach (var d in FindObjectsOfType<Destructible>())
         {

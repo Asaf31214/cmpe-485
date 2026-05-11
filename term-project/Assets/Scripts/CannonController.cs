@@ -4,14 +4,14 @@ using System;
 public class CannonController : MonoBehaviour
 {
     public static event Action<Vector3, Vector3, float> OnFire;
-    public float YawSpeed = 250f;
+    public float YawSpeed = 125f;
     public float PitchSpeed = 200f;
     public float MinPitch = 10f;
     public float MaxPitch = 70f;
 
-    public float Power { get; private set; } = 15f;
-    public float MinPower = 10f;
-    public float MaxPower = 30f;
+    public float Power { get; private set; } = 30f;
+    public float MinPower = 20f;
+    public float MaxPower = 60f;
     public float PowerSpeed = 10f;
 
     private GameObject basePivot;

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ExplosionManager : MonoBehaviour
 {
-    public const float Radius = 5f;
+    public const float Radius = 2.5f;
     public const float Force = 500f;
     public const float Damage = 100f;
 

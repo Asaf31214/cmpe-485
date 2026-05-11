@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class TrajectoryPreview : MonoBehaviour
 {
-    public int Dots = 30;
-    public float TimeStep = 0.15f;
+    public int Dots = 60;
+    public float TimeStep = 0.075f;
 
     private GameObject[] dots;
     private CannonController cannon;
