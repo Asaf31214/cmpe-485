@@ -6,6 +6,7 @@ public class SceneSetup : MonoBehaviour
 
     public GameObject Ground { get; private set; }
     public Light DirectionalLight { get; private set; }
+    public CannonController Cannon { get; private set; }
 
     private void Awake()
     {
@@ -18,6 +19,13 @@ public class SceneSetup : MonoBehaviour
         CreateGround();
         CreateLighting();
         SetupCamera();
+        CreateCannon();
+    }
+
+    private void CreateCannon()
+    {
+        var cannonGO = new GameObject("Cannon");
+        Cannon = cannonGO.AddComponent<CannonController>();
     }
 
     private void CreateGround()
