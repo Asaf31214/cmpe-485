@@ -57,7 +57,6 @@ public class GameManager : MonoBehaviour
             if (d.IsTarget) TotalTargets++;
         }
         destroyedTargets = 0;
-        levelComplete = false;
     }
 
     private void OnFireRequested(Vector3 pos, Vector3 dir, float power)
