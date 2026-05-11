@@ -24,10 +24,16 @@ public class ExplosionManager : MonoBehaviour
         foreach (var col in colliders)
         {
             var rb = col.attachedRigidbody;
-            if (rb != null && !rb.isKinematic)
+            if (rb == null) continue;
+            
+            // Wake up kinematic targets
+            if (rb.isKinematic)
             {
-                rb.AddExplosionForce(Force, position, Radius);
+                rb.isKinematic = false;
+                rb.WakeUp();
             }
+            
+            rb.AddExplosionForce(Force, position, Radius);
 
             // Distance-based damage to destructible objects
             var destructible = col.GetComponentInParent<Destructible>();

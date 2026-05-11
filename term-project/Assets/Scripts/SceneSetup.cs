@@ -57,6 +57,13 @@ public class SceneSetup : MonoBehaviour
 
     private void CreateLighting()
     {
+        // Physics tuning for stacked block stability (Technical Challenge #1)
+        Physics.sleepThreshold = 0.005f;
+        Physics.defaultContactOffset = 0.01f;
+        Time.fixedDeltaTime = 0.005f; // 200 Hz physics step
+        Physics.defaultSolverIterations = 10;
+        Physics.defaultSolverVelocityIterations = 10;
+
         RenderSettings.skybox = null;
         Camera.main.clearFlags = CameraClearFlags.SolidColor;
         Camera.main.backgroundColor = new Color(0.4f, 0.65f, 0.9f);
