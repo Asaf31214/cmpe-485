@@ -7,6 +7,7 @@ public class Destructible : MonoBehaviour
     public float MinCollisionDamageVelocity = 8f;
 
     private float maxHealth;
+    private bool destroyed;
 
     private void Start()
     {
@@ -15,9 +16,12 @@ public class Destructible : MonoBehaviour
 
     public void TakeDamage(float amount)
     {
+        if (destroyed) return;
+        
         Health -= amount;
         if (Health <= 0)
         {
+            destroyed = true;
             Destroy(gameObject);
             if (IsTarget)
             {

@@ -104,12 +104,7 @@ public class GameManager : MonoBehaviour
 
     private void CheckWinLose()
     {
-        int remaining = 0;
-        foreach (var d in FindObjectsOfType<Destructible>())
-        {
-            if (d.IsTarget) remaining++;
-        }
-
+        int remaining = TotalTargets - destroyedTargets;
         if (remaining <= 0)
         {
             State = GameState.GameOver;

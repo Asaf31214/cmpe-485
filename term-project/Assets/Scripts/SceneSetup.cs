@@ -47,6 +47,12 @@ public class SceneSetup : MonoBehaviour
         var groundMat = new Material(Shader.Find("Diffuse"));
         groundMat.color = new Color(0.2f, 0.5f, 0.1f);
         Ground.GetComponent<Renderer>().material = groundMat;
+
+        // Use box collider instead of mesh - plane mesh is too thin for physics
+        Destroy(Ground.GetComponent<Collider>());
+        var groundCollider = Ground.AddComponent<BoxCollider>();
+        groundCollider.size = new Vector3(1000, 1, 1000);
+        groundCollider.center = new Vector3(0, -0.5f, 0);
     }
 
     private void CreateLighting()

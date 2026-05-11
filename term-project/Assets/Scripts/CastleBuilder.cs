@@ -54,8 +54,11 @@ public class CastleBuilder : MonoBehaviour
         rb.mass = 1f;
         rb.useGravity = true;
 
-        var destructible = go.AddComponent<Destructible>();
-        destructible.IsTarget = isTarget;
-        destructible.Health = isTarget ? 50f : 30f;
+        if (isTarget)
+        {
+            var destructible = go.AddComponent<Destructible>();
+            destructible.IsTarget = true;
+            destructible.Health = 50f;
+        }
     }
 }
