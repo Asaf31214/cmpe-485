@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class ProfilerDisplay : MonoBehaviour
 {
     private Text text;
-    private float updateInterval = 0.5f;
+    private float updateInterval = 0.1f;
     private float timer;
     private int frameCount;
     private float fps;
@@ -28,7 +28,7 @@ public class ProfilerDisplay : MonoBehaviour
         text = new GameObject("ProfilerText").AddComponent<Text>();
         text.transform.SetParent(canvas.transform, false);
         text.rectTransform.sizeDelta = new Vector2(400, 150);
-        text.rectTransform.anchoredPosition = new Vector2(-10, -10);
+        text.rectTransform.anchoredPosition = new Vector2(220, -90);
         text.rectTransform.anchorMin = new Vector2(0, 1);
         text.rectTransform.anchorMax = new Vector2(0, 1);
         text.font = Font.CreateDynamicFontFromOSFont("Arial", 16) ?? Font.CreateDynamicFontFromOSFont("Liberation Sans", 16);
