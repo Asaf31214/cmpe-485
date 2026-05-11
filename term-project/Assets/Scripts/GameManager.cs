@@ -9,7 +9,8 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     public GameState State { get; private set; } = GameState.Aim;
-    public int MaxAmmo = 5;
+    public int CurrentLevel => LevelData.CurrentLevel;
+    public int MaxAmmo => LevelData.MaxAmmo;
     public int Ammo { get; private set; }
     public int TotalTargets { get; private set; }
     private int destroyedTargets;
@@ -49,13 +50,14 @@ public class GameManager : MonoBehaviour
 
     private void BuildCastle()
     {
-        var castle = CastleBuilder.BuildCastle(new Vector3(0, 0, 75));
+        var castle = CastleBuilder.BuildCastle(LevelData.CastlePosition, LevelData.CurrentLevel);
         TotalTargets = 0;
         foreach (var d in FindObjectsOfType<Destructible>())
         {
             if (d.IsTarget) TotalTargets++;
         }
         destroyedTargets = 0;
+        levelComplete = false;
     }
 
     private void OnFireRequested(Vector3 pos, Vector3 dir, float power)
@@ -70,14 +72,48 @@ public class GameManager : MonoBehaviour
     private IEnumerator FireSequence()
     {
         State = GameState.Fire;
+        
+        // Switch to cinematic camera angle during flight
+        Vector3 originalCamPos = Camera.main.transform.position;
+        Vector3 originalCamLook = new Vector3(0, 5, 15);
+        Camera.main.transform.position = new Vector3(15, 8, 95);
+        Camera.main.transform.LookAt(new Vector3(0, 5, 40));
+        
         yield return null;
 
         // Wait for all projectiles to settle or be destroyed
         yield return new WaitForSeconds(1f);
         yield return WaitForProjectilesToSettle();
 
+        // Restore original camera
+        Camera.main.transform.position = originalCamPos;
+        Camera.main.transform.LookAt(originalCamLook);
+
         State = GameState.Resolve;
         CheckWinLose();
+    }
+
+    private void Update()
+    {
+        // Level select cheat codes (works anytime)
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            LoadLevel(0);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            LoadLevel(1);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            LoadLevel(2);
+        }
+    }
+
+    private void LoadLevel(int level)
+    {
+        LevelData.CurrentLevel = Mathf.Clamp(level, 0, 2);
+        RestartLevel();
     }
 
     private IEnumerator WaitForProjectilesToSettle()
@@ -120,8 +156,27 @@ public class GameManager : MonoBehaviour
         State = GameState.Aim;
     }
 
+    public void RestartLevel()
+    {
+        // Destroy existing castle and all destructibles
+        var castle = GameObject.Find("Castle");
+        if (castle != null) Destroy(castle);
+
+        foreach (var p in FindObjectsOfType<Projectile>())
+            Destroy(p.gameObject);
+
+        // Rebuild
+        BuildCastle();
+        Ammo = MaxAmmo;
+        State = GameState.Aim;
+        GameUI.Instance.UpdateAmmo(Ammo, MaxAmmo);
+        GameUI.Instance.UpdateLevel();
+        GameUI.Instance.HideGameOver();
+    }
+
     public void TargetDestroyed()
     {
         destroyedTargets++;
+        CheckWinLose();
     }
 }

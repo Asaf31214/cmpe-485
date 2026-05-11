@@ -6,6 +6,7 @@ public class GameUI : MonoBehaviour
     public static GameUI Instance { get; private set; }
 
     private Text ammoText;
+    private Text levelText;
     private GameObject gameOverOverlay;
     private Text gameOverText;
 
@@ -22,6 +23,7 @@ public class GameUI : MonoBehaviour
     private void Start()
     {
         CreateHUD();
+        UpdateLevel();
     }
 
     private void CreateHUD()
@@ -32,6 +34,18 @@ public class GameUI : MonoBehaviour
         canvas.AddComponent<CanvasScaler>();
         canvas.AddComponent<GraphicRaycaster>();
 
+        // Level text (top center)
+        levelText = new GameObject("LevelText").AddComponent<Text>();
+        levelText.transform.SetParent(canvas.transform, false);
+        levelText.rectTransform.sizeDelta = new Vector2(200, 40);
+        levelText.rectTransform.anchoredPosition = new Vector2(0, 250);
+        levelText.rectTransform.anchorMin = new Vector2(0.5f, 1);
+        levelText.rectTransform.anchorMax = new Vector2(0.5f, 1);
+        levelText.font = Font.CreateDynamicFontFromOSFont("Arial", 28) ?? Font.CreateDynamicFontFromOSFont("Liberation Sans", 28);
+        levelText.color = Color.white;
+        levelText.alignment = TextAnchor.MiddleCenter;
+
+        // Ammo text (bottom right)
         ammoText = new GameObject("AmmoText").AddComponent<Text>();
         ammoText.transform.SetParent(canvas.transform, false);
         ammoText.rectTransform.sizeDelta = new Vector2(200, 40);
@@ -42,6 +56,7 @@ public class GameUI : MonoBehaviour
         ammoText.color = Color.white;
         ammoText.alignment = TextAnchor.MiddleCenter;
 
+        // Game over overlay
         gameOverOverlay = new GameObject("GameOverOverlay");
         gameOverOverlay.transform.SetParent(canvas.transform, false);
         var overlayRect = gameOverOverlay.AddComponent<RectTransform>();
@@ -53,6 +68,7 @@ public class GameUI : MonoBehaviour
         overlayImage.raycastTarget = false;
         gameOverOverlay.SetActive(false);
 
+        // Game over text
         gameOverText = new GameObject("GameOverText").AddComponent<Text>();
         gameOverText.transform.SetParent(gameOverOverlay.transform, false);
         gameOverText.rectTransform.sizeDelta = new Vector2(400, 60);
@@ -69,10 +85,16 @@ public class GameUI : MonoBehaviour
         ammoText.text = $"Ammo: {current}/{max}";
     }
 
+    public void UpdateLevel()
+    {
+        levelText.text = $"Level {LevelData.CurrentLevel + 1}/3";
+    }
+
     public void ShowWin()
     {
         gameOverOverlay.SetActive(true);
-        gameOverText.text = "YOU WIN!";
+        bool isFinalLevel = LevelData.CurrentLevel >= 2;
+        gameOverText.text = isFinalLevel ? "GAME COMPLETE!" : "LEVEL COMPLETE!";
         gameOverText.color = Color.green;
     }
 
@@ -81,6 +103,13 @@ public class GameUI : MonoBehaviour
         gameOverOverlay.SetActive(true);
         gameOverText.text = "YOU LOSE!";
         gameOverText.color = Color.red;
+    }
+
+    public void ShowGameComplete()
+    {
+        gameOverOverlay.SetActive(true);
+        gameOverText.text = "ALL LEVELS COMPLETE!\nYOU WIN!";
+        gameOverText.color = Color.green;
     }
 
     public void HideGameOver()

@@ -37,7 +37,7 @@ public class Destructible : MonoBehaviour
         float impactVelocity = collision.relativeVelocity.magnitude;
         if (impactVelocity >= MinCollisionDamageVelocity)
         {
-            TakeDamage(impactVelocity * 3f);
+            TakeDamage(impactVelocity * 20f);
         }
     }
 }

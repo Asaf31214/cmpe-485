@@ -9,9 +9,9 @@ public class CannonController : MonoBehaviour
     public float MinPitch = 10f;
     public float MaxPitch = 70f;
 
-    public float Power { get; private set; } = 30f;
-    public float MinPower = 20f;
-    public float MaxPower = 60f;
+    public float Power { get; private set; }
+    public float MinPower => LevelData.CannonPowerMin;
+    public float MaxPower => LevelData.CannonPowerMax;
     public float PowerSpeed = 10f;
 
     private GameObject basePivot;
