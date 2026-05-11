@@ -31,6 +31,7 @@ public class SceneSetup : MonoBehaviour
         gmGO.AddComponent<GameUI>();
         gmGO.AddComponent<TrajectoryPreview>();
         gmGO.AddComponent<ProfilerDisplay>();
+        gmGO.AddComponent<PerformanceTest>();
     }
 
     private void CreateCannon()
