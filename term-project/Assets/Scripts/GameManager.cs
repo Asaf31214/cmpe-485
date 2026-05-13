@@ -156,7 +156,7 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
         yield return WaitForProjectilesToSettle();
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(1.5f);
 
         cam.transform.position = originalPos;
         cam.transform.rotation = originalRot;
