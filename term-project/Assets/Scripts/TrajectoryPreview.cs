@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class TrajectoryPreview : MonoBehaviour
 {
-    public int Dots = 60;
+    public int Dots = 120;
     public float TimeStep = 0.075f;
 
     private GameObject[] dots;
@@ -29,7 +29,7 @@ public class TrajectoryPreview : MonoBehaviour
 
     private void Update()
     {
-        Vector3 startPos = cannon.GetMuzzlePosition();
+        Vector3 startPos = cannon.Muzzle.position;
         Vector3 vel = cannon.GetFireDirection() * cannon.Power;
         Vector3 gravity = Physics.gravity;
 

@@ -2,37 +2,40 @@ using UnityEngine;
 
 public class Destructible : MonoBehaviour
 {
+    public static event System.Action OnTargetDestroyed;
+
     public float Health = 50f;
-    public bool IsTarget = false;
+    public bool IsTarget;
     public float MinCollisionDamageVelocity = 8f;
 
-    private float maxHealth;
     private bool destroyed;
-
-    private void Start()
-    {
-        maxHealth = Health;
-    }
 
     public void TakeDamage(float amount)
     {
         if (destroyed) return;
-        
+
         Health -= amount;
         if (Health <= 0)
         {
-            destroyed = true;
-            Destroy(gameObject);
-            if (IsTarget)
-            {
-                GameManager.Instance.TargetDestroyed();
-            }
+            Destroy();
         }
+    }
+
+    private void Destroy()
+    {
+        destroyed = true;
+
+        if (IsTarget)
+        {
+            OnTargetDestroyed?.Invoke();
+        }
+
+        Destroy(gameObject);
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!IsTarget) return;
+        if (!IsTarget || destroyed) return;
 
         float impactVelocity = collision.relativeVelocity.magnitude;
         if (impactVelocity >= MinCollisionDamageVelocity)

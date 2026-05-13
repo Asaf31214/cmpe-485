@@ -3,22 +3,20 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     private const float Radius = 0.3f;
+    private const float MinImpactVelocity = 2f;
 
-    public Rigidbody rb;
+    public Rigidbody Rigidbody { get; private set; }
+
     private bool exploded;
 
-    public static GameObject Create(Vector3 position, Vector3 direction, float power)
+    public static Projectile Create(Vector3 position, Vector3 direction, float power)
     {
-        var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        go.name = "Projectile";
+        var go = new GameObject("Projectile");
         go.transform.position = position;
-        go.transform.localScale = Vector3.one * Radius * 2;
 
-        var renderer = go.GetComponent<Renderer>();
-        renderer.material.color = Color.black;
-
-        var collider = go.GetComponent<SphereCollider>();
-        var material = new PhysicMaterial
+        var collider = go.AddComponent<SphereCollider>();
+        collider.radius = Radius;
+        collider.material = new PhysicMaterial
         {
             dynamicFriction = 0.3f,
             staticFriction = 0.2f,
@@ -26,43 +24,70 @@ public class Projectile : MonoBehaviour
             frictionCombine = PhysicMaterialCombine.Multiply,
             bounceCombine = PhysicMaterialCombine.Maximum
         };
-        collider.material = material;
+
+        var mesh = go.AddComponent<MeshRenderer>();
+        mesh.material = new Material(Shader.Find("Diffuse"));
+        mesh.material.color = Color.black;
+
+        var filter = go.AddComponent<MeshFilter>();
+        filter.mesh = CreateSphereMesh(Radius);
 
         var projectile = go.AddComponent<Projectile>();
-        projectile.rb = go.AddComponent<Rigidbody>();
-        projectile.rb.mass = 5f;
-        projectile.rb.useGravity = true;
-        projectile.rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        projectile.Rigidbody = go.AddComponent<Rigidbody>();
+        projectile.Rigidbody.mass = 5f;
+        projectile.Rigidbody.useGravity = true;
+        projectile.Rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        projectile.Rigidbody.velocity = direction * power;
 
-        go.GetComponent<Rigidbody>().velocity = direction * power;
+        go.AddComponent<ProjectileCollisionHandler>();
 
-        return go;
+        return projectile;
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private static Mesh CreateSphereMesh(float radius)
     {
-        if (exploded) return;
-
-        float impactVelocity = collision.relativeVelocity.magnitude;
-        if (impactVelocity > 2f)
-        {
-            Explode();
-        }
+        var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        sphere.transform.localScale = Vector3.one * radius * 2;
+        var mesh = sphere.GetComponent<MeshFilter>().mesh;
+        Destroy(sphere);
+        return mesh;
     }
 
     private void Update()
     {
-        if (transform.position.y < -10f && !exploded)
+        if (!exploded && transform.position.y < -10f)
         {
             Explode();
         }
     }
 
-    private void Explode()
+    public void Explode()
     {
+        if (exploded) return;
         exploded = true;
-        rb.isKinematic = true;
+
+        Rigidbody.isKinematic = true;
         ExplosionManager.Create(transform.position);
         Destroy(gameObject, 0.3f);
+    }
+}
+
+public class ProjectileCollisionHandler : MonoBehaviour
+{
+    private const float MinImpactVelocity = 2f;
+
+    private Projectile projectile;
+
+    private void Awake()
+    {
+        projectile = GetComponent<Projectile>();
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.relativeVelocity.magnitude > MinImpactVelocity)
+        {
+            projectile.Explode();
+        }
     }
 }

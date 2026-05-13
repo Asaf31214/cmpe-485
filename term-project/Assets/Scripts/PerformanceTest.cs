@@ -1,22 +1,20 @@
+#if UNITY_EDITOR
 using UnityEngine;
-using UnityEngine.Profiling;
 
 public class PerformanceTest : MonoBehaviour
 {
     private int testIndex = 0;
-    private bool testRunning = false;
     private float startTime;
     private long startMemory;
     private int blockCount;
 
-    // Test configurations: [blockCount, explosionRadius]
-    private int[][] tests = new int[][]
+    private readonly int[][] tests = new int[][]
     {
-        new int[] { 10, 2 },   // Small castle, small explosion
-        new int[] { 20, 3 },   // Medium castle, medium explosion
-        new int[] { 30, 4 },   // Large castle, large explosion
-        new int[] { 40, 5 },   // Very large castle, very large explosion
-        new int[] { 50, 6 },   // Massive castle, massive explosion
+        new int[] { 10, 2 },
+        new int[] { 20, 3 },
+        new int[] { 30, 4 },
+        new int[] { 40, 5 },
+        new int[] { 50, 6 },
     };
 
     private void Update()
@@ -36,28 +34,28 @@ public class PerformanceTest : MonoBehaviour
             return;
         }
 
-        // Clean up
-        var castle = GameObject.Find("TestCastle");
-        if (castle != null) Destroy(castle);
-        foreach (var p in FindObjectsOfType<Projectile>()) Destroy(p.gameObject);
-
-        // Setup test
-        blockCount = tests[testIndex][0];
-        int explosionRadius = tests[testIndex][1];
-
-        // Build test castle (simple stack)
-        BuildTestCastle(blockCount);
-
-        // Record baseline
-        startMemory = System.GC.GetTotalMemory(false);
-        startTime = Time.realtimeSinceStartup;
-
-        // Trigger explosion after 0.5s
+        Cleanup();
+        SetupTest();
         Invoke(nameof(TriggerExplosion), 0.5f);
         Invoke(nameof(RecordResults), 1.0f);
 
-        Debug.Log($"=== TEST {testIndex + 1}: {blockCount} blocks, {explosionRadius}m explosion ===");
         testIndex++;
+    }
+
+    private void Cleanup()
+    {
+        var castle = GameObject.Find("TestCastle");
+        if (castle != null) Destroy(castle);
+        foreach (var p in FindObjectsOfType<Projectile>()) Destroy(p.gameObject);
+    }
+
+    private void SetupTest()
+    {
+        blockCount = tests[testIndex][0];
+        BuildTestCastle(blockCount);
+        startMemory = System.GC.GetTotalMemory(false);
+        startTime = Time.realtimeSinceStartup;
+        Debug.Log($"=== TEST {testIndex + 1}: {blockCount} blocks ===");
     }
 
     private void BuildTestCastle(int count)
@@ -66,7 +64,6 @@ public class PerformanceTest : MonoBehaviour
         castle.transform.position = new Vector3(0, 0, 15);
 
         int perLayer = 4;
-        int layers = Mathf.CeilToInt(count / (float)perLayer);
 
         for (int i = 0; i < count; i++)
         {
@@ -78,18 +75,14 @@ public class PerformanceTest : MonoBehaviour
             float y = 0.5f + layer * 1.02f;
 
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            go.name = "TestBlock";
             go.transform.SetParent(castle.transform);
             go.transform.localPosition = new Vector3(x, y, z);
-            go.transform.localScale = Vector3.one;
             go.GetComponent<Renderer>().material.color = Color.gray;
 
             var rb = go.AddComponent<Rigidbody>();
             rb.mass = 5f;
             rb.useGravity = true;
         }
-
-        Debug.Log($"Built castle with {count} blocks");
     }
 
     private void TriggerExplosion()
@@ -114,12 +107,7 @@ public class PerformanceTest : MonoBehaviour
         int physicsObjects = FindObjectsOfType<Rigidbody>().Length;
         float fps = 1f / Time.deltaTime;
 
-        Debug.Log($"RESULTS:");
-        Debug.Log($"  Blocks: {blockCount}");
-        Debug.Log($"  Physics objects: {physicsObjects}");
-        Debug.Log($"  FPS during test: {fps:F1}");
-        Debug.Log($"  GC Alloc: {memoryUsed} KB");
-        Debug.Log($"  Time: {elapsed * 1000:F1} ms");
-        Debug.Log("---");
+        Debug.Log($"RESULTS: Blocks={blockCount}, Physics={physicsObjects}, FPS={fps:F1}, GC={memoryUsed}KB, Time={elapsed*1000:F1}ms");
     }
 }
+#endif
