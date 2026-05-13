@@ -7,6 +7,9 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    private Texture2D _blockTexture;
+    private Texture2D _anchorTexture;
+
     public GameState State { get; private set; } = GameState.Aim;
     public int Ammo { get; private set; }
     public int TargetsRemaining { get; private set; }
@@ -16,6 +19,12 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+    }
+
+    public void SetTextures(Texture2D blockTexture, Texture2D anchorTexture)
+    {
+        _blockTexture = blockTexture;
+        _anchorTexture = anchorTexture;
     }
 
     private void Start()
@@ -92,7 +101,7 @@ public class GameManager : MonoBehaviour
 
     private void BuildCastle()
     {
-        CastleBuilder.BuildCastle(LevelData.CastlePosition, LevelData.GetCurrentLayout());
+        CastleBuilder.BuildCastle(LevelData.CastlePosition, LevelData.GetCurrentLayout(), _blockTexture, _anchorTexture);
         TargetsRemaining = LevelData.GetTargetCount();
     }
 

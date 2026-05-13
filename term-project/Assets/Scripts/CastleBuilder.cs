@@ -8,8 +8,14 @@ public static class CastleBuilder
     private const float BlockGap = 0.01f;
     private const float TargetHeight = 1f;
 
-    public static GameObject BuildCastle(Vector3 center, BlockType[,,] layout)
+    private static Texture2D _blockTexture;
+    private static Texture2D _anchorTexture;
+
+    public static GameObject BuildCastle(Vector3 center, BlockType[,,] layout, Texture2D blockTexture, Texture2D anchorTexture)
     {
+        _blockTexture = blockTexture;
+        _anchorTexture = anchorTexture;
+
         var castle = new GameObject("Castle");
         castle.transform.position = center;
 
@@ -66,9 +72,34 @@ public static class CastleBuilder
         go.transform.localPosition = localPos;
 
         var mat = new Material(Shader.Find("Diffuse"));
-        if (isTarget) mat.color = Color.red;
-        else if (isAnchor) mat.color = new Color(0.3f, 0.3f, 0.8f);
-        else mat.color = new Color(0.6f, 0.6f, 0.6f);
+        if (isTarget)
+        {
+            mat.color = Color.red;
+        }
+        else if (isAnchor)
+        {
+            if (_anchorTexture != null)
+            {
+                mat.mainTexture = _anchorTexture;
+                mat.mainTextureScale = new Vector2(1, 1);
+            }
+            else
+            {
+                mat.color = new Color(0.3f, 0.3f, 0.8f);
+            }
+        }
+        else
+        {
+            if (_blockTexture != null)
+            {
+                mat.mainTexture = _blockTexture;
+                mat.mainTextureScale = new Vector2(1, 1);
+            }
+            else
+            {
+                mat.color = new Color(0.6f, 0.6f, 0.6f);
+            }
+        }
         go.GetComponent<Renderer>().material = mat;
 
         if (!isAnchor)

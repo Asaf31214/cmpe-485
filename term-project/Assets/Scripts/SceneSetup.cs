@@ -2,6 +2,10 @@ using UnityEngine;
 
 public class SceneSetup : MonoBehaviour
 {
+    [SerializeField] private Texture2D groundTexture;
+    [SerializeField] private Texture2D blockTexture;
+    [SerializeField] private Texture2D anchorTexture;
+
     private void Awake()
     {
         SetupPhysics();
@@ -28,7 +32,15 @@ public class SceneSetup : MonoBehaviour
         ground.transform.localScale = Vector3.one * 100;
 
         var mat = new Material(Shader.Find("Diffuse"));
-        mat.color = new Color(0.2f, 0.5f, 0.1f);
+        if (groundTexture != null)
+        {
+            mat.mainTexture = groundTexture;
+            mat.mainTextureScale = new Vector2(100, 100);
+        }
+        else
+        {
+            mat.color = new Color(0.2f, 0.5f, 0.1f);
+        }
         ground.GetComponent<Renderer>().material = mat;
 
         Destroy(ground.GetComponent<Collider>());
@@ -82,7 +94,8 @@ public class SceneSetup : MonoBehaviour
     private void CreateGameManager()
     {
         var gmGO = new GameObject("GameManager");
-        gmGO.AddComponent<GameManager>();
+        var gm = gmGO.AddComponent<GameManager>();
+        gm.SetTextures(blockTexture, anchorTexture);
         gmGO.AddComponent<GameUI>();
         gmGO.AddComponent<TrajectoryPreview>();
     }

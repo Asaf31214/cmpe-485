@@ -337,6 +337,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31e9d6e89b26116f79bd05ed19322d3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  groundTexture: {fileID: 2800000, guid: ecf38b3b5ac744c5aea32640fc54e9a4, type: 3}
+  blockTexture: {fileID: 2800000, guid: 4473eeb02172484dbace77c228614897, type: 3}
+  anchorTexture: {fileID: 2800000, guid: 0a43704c99f54970a6e0a717db1997b4, type: 3}
 --- !u!4 &1074747290
 Transform:
   m_ObjectHideFlags: 0
