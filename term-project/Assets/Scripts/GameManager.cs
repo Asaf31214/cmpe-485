@@ -151,7 +151,7 @@ public class GameManager : MonoBehaviour
         Vector3 originalPos = cam.transform.position;
         Quaternion originalRot = cam.transform.rotation;
 
-        cam.transform.position = new Vector3(15, 8, 95);
+        cam.transform.position = new Vector3(5, 8, 65);
         cam.transform.LookAt(new Vector3(0, 5, 40));
 
         yield return new WaitForSeconds(1f);
