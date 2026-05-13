@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public enum BlockType { Empty = 0, Block = 1, Target = 2, Anchor = 3 }
 
@@ -10,11 +11,17 @@ public static class CastleBuilder
 
     private static Texture2D _blockTexture;
     private static Texture2D _anchorTexture;
+    private static List<Destructible> _cachedBlocks = new List<Destructible>();
+
+    public static List<Destructible> GetCachedBlocks() => _cachedBlocks;
+
+    public static void ClearCache() => _cachedBlocks.Clear();
 
     public static GameObject BuildCastle(Vector3 center, BlockType[,,] layout, Texture2D blockTexture, Texture2D anchorTexture)
     {
         _blockTexture = blockTexture;
         _anchorTexture = anchorTexture;
+        _cachedBlocks.Clear();
 
         var castle = new GameObject("Castle");
         castle.transform.position = center;
@@ -117,5 +124,6 @@ public static class CastleBuilder
         var d = go.AddComponent<Destructible>();
         d.IsTarget = isTarget;
         d.Health = isTarget ? 50f : (isAnchor ? 40f : 30f);
+        _cachedBlocks.Add(d);
     }
 }

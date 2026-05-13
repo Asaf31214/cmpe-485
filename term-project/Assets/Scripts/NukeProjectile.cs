@@ -9,6 +9,7 @@ public class NukeProjectile : MonoBehaviour
     private const float Damage = 500f;
 
     private static AudioClip _explosionClip;
+    public static bool UseOptimized { get; set; } = false;
 
     private bool exploded;
 
@@ -23,7 +24,7 @@ public class NukeProjectile : MonoBehaviour
 
         var mesh = go.AddComponent<MeshRenderer>();
         mesh.material = new Material(Shader.Find("Diffuse"));
-        mesh.material.color = Color.yellow;
+        mesh.material.color = UseOptimized ? Color.cyan : Color.yellow;
 
         var filter = go.AddComponent<MeshFilter>();
         filter.mesh = CreateSphereMesh(1f);
@@ -61,7 +62,10 @@ public class NukeProjectile : MonoBehaviour
         int blocksBefore = Object.FindObjectsOfType<Destructible>().Length;
         PerformanceLogger.LogExplosionStart(blocksBefore);
 
-        ApplyExplosion();
+        if (UseOptimized)
+            ApplyExplosionOptimized();
+        else
+            ApplyExplosion();
 
         StartCoroutine(LogAfterDestruction(blocksBefore));
     }
@@ -72,9 +76,8 @@ public class NukeProjectile : MonoBehaviour
         yield return null;
 
         int blocksAfter = Object.FindObjectsOfType<Destructible>().Length;
-        PerformanceLogger.LogExplosionEnd(blocksBefore - blocksAfter);
+        PerformanceLogger.LogExplosionEnd(blocksBefore - blocksAfter, UseOptimized ? "optimized" : "physics");
 
-        Destroy(gameObject, 0.5f);
     }
 
     private void PlaySound()
@@ -98,7 +101,7 @@ public class NukeProjectile : MonoBehaviour
 
         var mat = go.GetComponent<Renderer>().material;
         mat.shader = Shader.Find("Particles/Standard Unlit");
-        mat.color = new Color(1f, 0.3f, 0f, 0.8f);
+        mat.color = UseOptimized ? new Color(0f, 1f, 1f, 0.8f) : new Color(1f, 0.3f, 0f, 0.8f);
 
         Object.Destroy(go.GetComponent<Collider>());
         var visual = go.AddComponent<ExplosionVisual>();
@@ -114,9 +117,7 @@ public class NukeProjectile : MonoBehaviour
         {
             var rb = col.attachedRigidbody;
             if (rb != null)
-            {
                 rb.AddExplosionForce(Force, transform.position, Radius);
-            }
 
             var destructible = col.GetComponentInParent<Destructible>();
             if (destructible != null)
@@ -124,6 +125,25 @@ public class NukeProjectile : MonoBehaviour
                 float distance = Vector3.Distance(transform.position, col.transform.position);
                 float ratio = 1f - Mathf.Clamp01(distance / Radius);
                 destructible.TakeDamage(Damage * ratio);
+            }
+        }
+    }
+
+    private void ApplyExplosionOptimized()
+    {
+        var blocks = CastleBuilder.GetCachedBlocks();
+
+        foreach (var block in blocks)
+        {
+            if (block == null) continue;
+
+            Vector3 blockPos = block.transform.position;
+            float distance = Vector3.Distance(transform.position, blockPos);
+
+            if (distance <= Radius)
+            {
+                float ratio = 1f - Mathf.Clamp01(distance / Radius);
+                block.TakeDamage(Damage * ratio);
             }
         }
     }

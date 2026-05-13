@@ -46,6 +46,7 @@ public class GameManager : MonoBehaviour
         HandleLevelSelect();
         HandleGameOverInput();
         HandleNuke();
+        HandleOptimizationToggle();
     }
 
     private void HandleNuke()
@@ -55,6 +56,15 @@ public class GameManager : MonoBehaviour
             Vector3 targetPos = LevelData.CastlePosition;
             targetPos.y = 0f;
             NukeProjectile.Create(targetPos);
+        }
+    }
+
+    private void HandleOptimizationToggle()
+    {
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            NukeProjectile.UseOptimized = !NukeProjectile.UseOptimized;
+            UnityEngine.Debug.Log($"Optimized mode: {NukeProjectile.UseOptimized}");
         }
     }
 
