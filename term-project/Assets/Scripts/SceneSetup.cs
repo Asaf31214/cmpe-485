@@ -69,7 +69,7 @@ public class SceneSetup : MonoBehaviour
 
     private void SetupCamera()
     {
-        Camera.main.transform.position = new Vector3(-7, 10, -65);
+        Camera.main.transform.position = new Vector3(-7, 10, -50);
         Camera.main.transform.LookAt(new Vector3(0, 5, 15));
     }
 
