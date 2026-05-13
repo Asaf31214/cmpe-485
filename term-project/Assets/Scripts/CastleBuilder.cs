@@ -81,7 +81,7 @@ public static class CastleBuilder
             if (_anchorTexture != null)
             {
                 mat.mainTexture = _anchorTexture;
-                mat.mainTextureScale = new Vector2(1, 1);
+                mat.mainTextureScale = new Vector2(0.1f, 0.1f);
             }
             else
             {
@@ -93,7 +93,7 @@ public static class CastleBuilder
             if (_blockTexture != null)
             {
                 mat.mainTexture = _blockTexture;
-                mat.mainTextureScale = new Vector2(1, 1);
+                mat.mainTextureScale = new Vector2(0.1f, 0.1f);
             }
             else
             {
