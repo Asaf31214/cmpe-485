@@ -20,8 +20,13 @@ public static class LevelData
         Level2_StepPyramid(),
         Level3_Fortress(),
         Level4_TwinTowers(),
-        Level5_Citadel()
+        Level5_Citadel(),
+        Nuke1_Thousand(),
+        Nuke2_TenThousand(),
+        Nuke3_HundredThousand()
     };
+
+    public static bool IsNukeLevel(int level) => level >= 5 && level < TotalLevels;
 
     private static LevelConfig Level1_Gate()
     {
@@ -273,6 +278,51 @@ public static class LevelData
         layout[3, 2, 4] = BlockType.Target;
 
         return new LevelConfig(layout, 3, 6, 30f, 70f);
+    }
+
+    private static LevelConfig Nuke1_Thousand()
+    {
+        int size = 10;
+        var layout = new BlockType[size, size, size];
+
+        for (int y = 0; y < size; y++)
+            for (int z = 0; z < size; z++)
+                for (int x = 0; x < size; x++)
+                    layout[z, y, x] = BlockType.Anchor;
+
+        layout[size/2, size/2, size/2] = BlockType.Target;
+
+        return new LevelConfig(layout, 1, 99, 20f, 50f);
+    }
+
+    private static LevelConfig Nuke2_TenThousand()
+    {
+        int size = 17;
+        var layout = new BlockType[size, size, size];
+
+        for (int y = 0; y < size; y++)
+            for (int z = 0; z < size; z++)
+                for (int x = 0; x < size; x++)
+                    layout[z, y, x] = BlockType.Anchor;
+
+        layout[size/2, size/2, size/2] = BlockType.Target;
+
+        return new LevelConfig(layout, 1, 99, 20f, 50f);
+    }
+
+    private static LevelConfig Nuke3_HundredThousand()
+    {
+        int size = 21;
+        var layout = new BlockType[size, size, size];
+
+        for (int y = 0; y < size; y++)
+            for (int z = 0; z < size; z++)
+                for (int x = 0; x < size; x++)
+                    layout[z, y, x] = BlockType.Anchor;
+
+        layout[size/2, size/2, size/2] = BlockType.Target;
+
+        return new LevelConfig(layout, 1, 99, 20f, 50f);
     }
 
     private static void FillRect(BlockType[,,] layout, int y, int zStart, int xStart, int depth, int width, BlockType type)

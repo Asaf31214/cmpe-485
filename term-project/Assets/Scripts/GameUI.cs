@@ -216,7 +216,7 @@ public class GameUI : MonoBehaviour
     public void ShowWin(bool finalLevel)
     {
         gameOverOverlay.SetActive(true);
-        gameOverText.text = finalLevel ? "ALL LEVELS COMPLETE!\nYOU WIN!" : "LEVEL COMPLETE!\nPress N for next level";
+        gameOverText.text = finalLevel ? "ALL LEVELS COMPLETE!\nYOU WIN!" : "LEVEL COMPLETE!\nPress E for next level";
         gameOverText.color = Color.green;
     }
 

@@ -45,6 +45,17 @@ public class GameManager : MonoBehaviour
     {
         HandleLevelSelect();
         HandleGameOverInput();
+        HandleNuke();
+    }
+
+    private void HandleNuke()
+    {
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            Vector3 targetPos = LevelData.CastlePosition;
+            targetPos.y = 0f;
+            NukeProjectile.Create(targetPos);
+        }
     }
 
     private void HandleLevelSelect()
@@ -62,7 +73,7 @@ public class GameManager : MonoBehaviour
     {
         if (State != GameState.GameOver) return;
 
-        if (Input.GetKeyDown(KeyCode.N))
+        if (Input.GetKeyDown(KeyCode.E))
         {
             int next = LevelData.CurrentLevel + 1;
             if (LevelData.IsValidLevel(next))
