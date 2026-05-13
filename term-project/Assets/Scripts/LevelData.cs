@@ -244,7 +244,14 @@ public static class LevelData
             layout[z, 5, 8] = BlockType.Anchor;
         }
 
-        // Inner blocks on roof
+        // Inner blocks on roof (with anchor support below)
+        layout[2, 5, 2] = BlockType.Anchor;
+        layout[2, 5, 3] = BlockType.Anchor;
+        layout[5, 5, 6] = BlockType.Anchor;
+        layout[5, 5, 7] = BlockType.Anchor;
+        layout[2, 5, 4] = BlockType.Anchor;
+        layout[5, 5, 5] = BlockType.Anchor;
+
         layout[2, 6, 2] = BlockType.Block;
         layout[2, 6, 3] = BlockType.Block;
         layout[5, 6, 6] = BlockType.Block;
