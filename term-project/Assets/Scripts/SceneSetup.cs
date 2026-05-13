@@ -85,6 +85,5 @@ public class SceneSetup : MonoBehaviour
         gmGO.AddComponent<GameManager>();
         gmGO.AddComponent<GameUI>();
         gmGO.AddComponent<TrajectoryPreview>();
-        gmGO.AddComponent<PerformanceTest>();
     }
 }
