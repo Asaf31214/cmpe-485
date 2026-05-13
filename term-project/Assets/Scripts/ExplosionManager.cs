@@ -34,9 +34,10 @@ public static class ExplosionManager
         foreach (var col in colliders)
         {
             var rb = col.attachedRigidbody;
-            if (rb == null) continue;
-
-            rb.AddExplosionForce(Force, position, Radius);
+            if (rb != null)
+            {
+                rb.AddExplosionForce(Force, position, Radius);
+            }
 
             var destructible = col.GetComponentInParent<Destructible>();
             if (destructible != null)

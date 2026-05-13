@@ -1,11 +1,11 @@
 using UnityEngine;
 
-public enum BlockType { Empty = 0, Block = 1, Target = 2 }
+public enum BlockType { Empty = 0, Block = 1, Target = 2, Anchor = 3 }
 
 public static class CastleBuilder
 {
-    private const float BlockSize = 1f;
-    private const float BlockGap = 0.02f;
+    private const float BlockSize = 0.5f;
+    private const float BlockGap = 0.01f;
     private const float TargetHeight = 1f;
 
     public static GameObject BuildCastle(Vector3 center, BlockType[,,] layout)
@@ -34,7 +34,7 @@ public static class CastleBuilder
                     float posZ = z * cellSize - offsetZ;
                     float posY = y * cellSize + (type == BlockType.Target ? TargetHeight / 2f : BlockSize / 2f);
 
-                    CreateBlock(castle.transform, new Vector3(posX, posY, posZ), type == BlockType.Target);
+                    CreateBlock(castle.transform, new Vector3(posX, posY, posZ), type);
                 }
             }
         }
@@ -42,8 +42,11 @@ public static class CastleBuilder
         return castle;
     }
 
-    private static void CreateBlock(Transform parent, Vector3 localPos, bool isTarget)
+    private static void CreateBlock(Transform parent, Vector3 localPos, BlockType type)
     {
+        bool isTarget = type == BlockType.Target;
+        bool isAnchor = type == BlockType.Anchor;
+
         GameObject go;
 
         if (isTarget)
@@ -55,7 +58,7 @@ public static class CastleBuilder
         else
         {
             go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            go.name = "Block";
+            go.name = isAnchor ? "Anchor" : "Block";
             go.transform.localScale = Vector3.one * BlockSize;
         }
 
@@ -63,23 +66,25 @@ public static class CastleBuilder
         go.transform.localPosition = localPos;
 
         var mat = new Material(Shader.Find("Diffuse"));
-        mat.color = isTarget ? Color.red : new Color(0.6f, 0.6f, 0.6f);
+        if (isTarget) mat.color = Color.red;
+        else if (isAnchor) mat.color = new Color(0.3f, 0.3f, 0.8f);
+        else mat.color = new Color(0.6f, 0.6f, 0.6f);
         go.GetComponent<Renderer>().material = mat;
 
-        var rb = go.AddComponent<Rigidbody>();
-        rb.mass = isTarget ? 2f : 5f;
-        rb.useGravity = true;
-        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
-        rb.sleepThreshold = 0.005f;
-        rb.maxAngularVelocity = 5f;
-        rb.drag = 0.1f;
-        rb.angularDrag = 0.5f;
-        
-        if (isTarget)
+        if (!isAnchor)
         {
-            var d = go.AddComponent<Destructible>();
-            d.IsTarget = true;
-            d.Health = 50f;
+            var rb = go.AddComponent<Rigidbody>();
+            rb.mass = isTarget ? 2f : 3f;
+            rb.useGravity = true;
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
+            rb.sleepThreshold = 0.005f;
+            rb.maxAngularVelocity = 5f;
+            rb.drag = 0.1f;
+            rb.angularDrag = 0.5f;
         }
+
+        var d = go.AddComponent<Destructible>();
+        d.IsTarget = isTarget;
+        d.Health = isTarget ? 50f : (isAnchor ? 40f : 30f);
     }
 }
