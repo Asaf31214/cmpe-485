@@ -74,8 +74,7 @@ public static class CastleBuilder
         rb.maxAngularVelocity = 5f;
         rb.drag = 0.1f;
         rb.angularDrag = 0.5f;
-        rb.isKinematic = isTarget;
-
+        
         if (isTarget)
         {
             var d = go.AddComponent<Destructible>();

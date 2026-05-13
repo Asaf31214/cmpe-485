@@ -36,12 +36,6 @@ public static class ExplosionManager
             var rb = col.attachedRigidbody;
             if (rb == null) continue;
 
-            if (rb.isKinematic)
-            {
-                rb.isKinematic = false;
-                rb.WakeUp();
-            }
-
             rb.AddExplosionForce(Force, position, Radius);
 
             var destructible = col.GetComponentInParent<Destructible>();
