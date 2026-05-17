@@ -22,8 +22,8 @@ public static class LevelData
         Level4_TwinTowers(),
         Level5_Citadel(),
         Nuke1_Thousand(),
-        Nuke2_TenThousand(),
-        Nuke3_HundredThousand()
+        Nuke2_FiveThousand(),
+        Nuke3_TenThousand()
     };
 
     public static bool IsNukeLevel(int level) => level >= 5 && level < TotalLevels;
@@ -295,7 +295,7 @@ public static class LevelData
         return new LevelConfig(layout, 1, 99, 20f, 50f);
     }
 
-    private static LevelConfig Nuke2_TenThousand()
+    private static LevelConfig Nuke2_FiveThousand()
     {
         int size = 17;
         var layout = new BlockType[size, size, size];
@@ -310,7 +310,7 @@ public static class LevelData
         return new LevelConfig(layout, 1, 99, 20f, 50f);
     }
 
-    private static LevelConfig Nuke3_HundredThousand()
+    private static LevelConfig Nuke3_TenThousand()
     {
         int size = 21;
         var layout = new BlockType[size, size, size];
